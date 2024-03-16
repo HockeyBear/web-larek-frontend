@@ -1,4 +1,6 @@
-export interface IProductList {
+export type PaymentMethods = 'card' | 'cash' | '';
+
+export interface IProduct {
   id: string,
   description: string,
   image: string,
@@ -8,24 +10,49 @@ export interface IProductList {
 }
 
 export interface IAppState {
-  catalog: IProductList[],
+  catalog: IProduct[],
   order: IOrder | null,
-  basket: string[],
+  basket: IProduct[] | null,
+  preview: string | null,
   loading: boolean,
 }
 
-export interface IOrderForm {
+export interface ICard {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  image: string;
+  price: number | null;
+  selected: boolean;
+}
+
+export interface IPage {
+  counter: number;
+  store: HTMLElement[];
+  locked: boolean;
+}
+
+export interface IOrderContacts {
   email: string,
   phone: string,
 }
 
 export interface IOrderDeliveryForm {
-  payment: string,
+  payment: PaymentMethods,
   address: string,
 }
 
-export interface IOrder extends IOrderForm, IOrderDeliveryForm {
+export interface IOrderFormError extends IOrderContacts, IOrderDeliveryForm {}
+
+export interface IOrder extends IOrderFormError {
   items: string[],
+  total: number;
+}
+
+export interface IOrderSuccess {
+  id: string;
+  total: number;
 }
 
 export type FormError = Partial<Record<keyof IOrder, string>>

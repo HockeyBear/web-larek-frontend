@@ -11,7 +11,7 @@
 - src/pages/index.html — HTML-файл главной страницы
 - src/types/index.ts — файл с типами
 - src/index.ts — точка входа приложения
-- src/styles/styles.scss — корневой файл стилей
+- src/scss/styles.scss — корневой файл стилей
 - src/utils/constants.ts — файл с константами
 - src/utils/utils.ts — файл с утилитами
 
@@ -59,7 +59,7 @@ yarn build
 Класс `Component<T>`
 Базовый класс для отображения компонентов, от него наследуются компоненты представления
 #### Конструктор:
-В конструктор входит один аргумент. Это контейнер (container) который после помещается в компонент
+В конструктор входит один аргумент. класс принимает констурктор: `constructor(container: HTMLElement)` - принимает начальный данные для модели и объект событий для уведомления о изменениях в модели
 
 ### Методы: ###
   - `setText`: Устанавливает текст содержимого
@@ -97,12 +97,32 @@ yarn build
   - `orderProduct (order: IOrder): Promise<IOrderResult>`: Отправляет запрос на сервер для оформления заказа с указанными данными
 
 Класс `Model`
-Базовый класс классов бизнес-модели, наследуются Product и AppState. Так же конструктор принимает класс EventEmitter, содержит метод emitChange, для того чтобы вызывать событие из компонента
+Базовый класс классов бизнес-модели, наследуются Product и AppState. класс принимает констурктор: `constructor(data: Partial<T>, protected events: IEvents)` - принимает начальный данные для модели и объект событий для уведомления о изменениях в модели, содержит метод emitChange, для того чтобы вызывать событие из компонента
 #### Конструктор:
 В конструктор помещается два аргумента: Частичные данные типа `T` и объект событий `IEvents`. Частичные данные `T` представляют структуру данных, которая используется для инициализации экземпляра класса. Объект `IEvents` содержит определения различных событий, которые могут быть сгенерированы и обработаны внутри класса.
 
 ### Методы: ###
   - `emitChange`: используется для уведомления других частей приложения о том, что модель была изменена.
+
+Класс `AppState`
+Дочерний класс Model.
+Имеет поля `catalog: IProduct[]` - хранит данные товара
+`order: IOrder[...]` - хранит данные при оформлении заказа
+`orderformerror: IOrderFormError = {}` - хранит сообщения об ошибках.
+
+### Методы: ###
+  `setStore(items: IProduct[])` - Инициируется данные в массиве, и рендерит карточки на странице
+  `toggleOrderedProduct(): string` - Записывает или удаляет id товара в order
+  `clearBasket()` - Для чистки корзины
+  `getTotalBasketPrice(): number` - Для получения суммы цены всех товаров в корзине
+  `validateContacts(): boolean;` - Валидация полей контакты
+  `validateDelivery(): boolean;` - Валидация полей заказа
+  `refreshOrder(): boolean;` - Очистка товаров после заказа
+  `orderformerror: IOrderFormError = {}` - Ошибки полей
+
+  Класс `Card`
+  
+
 
 ## Компоненты 
 
@@ -151,10 +171,8 @@ yarn build
 ## Типы данных
 
 ```typescript
-/*
-    Тип, описывающий ошибки валидации форм
-  **/
-type FormErrors = Partial<Record<keyof IOrder, string>>;
+
+export type PaymentMethods = 'card' | 'cash' | '';
 
 /*
   * Интерфейс, указывающий возвращаемые данные карточки
@@ -162,6 +180,8 @@ type FormErrors = Partial<Record<keyof IOrder, string>>;
 interface IProduct {
   // ID продукта
   id: string;
+  // Категория товара
+  categoty: string;
   // Описание товара
   description: string;
   // Ссылка на картинку
@@ -172,8 +192,6 @@ interface IProduct {
   category: CategoryType;
   // Цена товара, может быть null
   price: number | null;
-  // Булево значение имеется ли товар в корзине
-  selected: boolean;
 }
 
 /*
@@ -182,56 +200,14 @@ interface IProduct {
     в формах
   **/
 interface IAppState {
-  // Корзина с товарами
-  basket: IProduct[] = [];
   // Массив карточек товара
   catalog: IProduct[];
   // Информация о заказе при покупке товара
   order: IOrder || null;
+  // Корзина с товарами
+  basket: IProduct[] | null;
   // Предосмотр товара
   preview: string | null
-  // Ошибки при заполнении форм
-  formErrors: FormErrors = {};
-  // Метод для добавления товара в корзину
-  addToBasket(value: Product): void;
-  // Метод для удаления товара из корзины
-  deleteFromBasket(id: string): void;
-  // Метод для полной очистки корзины
-  clearBasket(): void;
-  // Метод для получения количества товаров в корзине
-  getBasketAmount(): number;
-  // Метод для получения суммы цены всех товаров в корзине
-  getTotalBasketPrice(): number;
-  // Метод для заполнения полей email, phone, address, payment в order
-  setOrderField(field: keyof IOrderForm, value: string): void;
-  // Валидация форм для окошка "контакты"
-  validateContacts(): boolean;
-  // Валидация форм для окошка "заказ"
-  validateDelivery(): boolean;
-  // Очистить order после покупки товаров
-  refreshOrder(): boolean;
-  // Метод для превращения данных, полученых с сервера в тип данных приложения
-  setStore(items: IProduct[]): void;
-  // Метод для обновления поля selected во всех товарах после совершения покупки
-  resetSelected(): void;
-}
-
-/*
-  * Интерфейс, описывающий поля заказа товара
-  **/
-export interface IOrder {
-  // Массив ID купленных товаров
-  items: string[];
-  // Способ оплаты
-  payment: string;
-  // Сумма заказа
-  total: number;
-  // Адрес доставки
-  address: string;
-  // Почта
-  email: string;
-  // Телефон
-  phone: string;
 }
 
 /*
@@ -272,7 +248,7 @@ interface IBasket {
 /*
   * Интерфейс, поля для ввода адреса и метот оплаты
   * */
-interface IOrder {
+interface IOrderDeliveryForm {
   // Адрес
   address: string;
   // Способ оплаты
@@ -282,10 +258,42 @@ interface IOrder {
 /*
   * Интерфейс, полей для ввода контактов
   * */
-interface IContacts {
+interface IOrderContacts {
   // Телефон
   phone: string;
   // Почта
   email: string;
 }
+
+/**
+  * Интерйфейс форм 
+  **/
+interface IOrderFormError extends IOrderContacts, IOrderDeliveryForm {}
+
+
+/*
+* Интерфейс, описывающий поля заказа товара и объеденяющий поля
+**/
+interface IOrder extends IOrderFormError {
+  // Массив ID купленных товаров
+  items: string[];
+  // Сумма заказа
+  total: number;
+}
+
+/*
+  * Интерфейс описывающий оформление заказа
+  **/
+interface IOrderSuccess {
+  // ID заказа
+  id: string;
+  // Сумма заказа
+  total: number;
+}
+
+/*
+  * Тип, описывающий ошибки валидации форм
+  **/
+type FormErrors = Partial<Record<keyof IOrder, string>>;
+
 ```
