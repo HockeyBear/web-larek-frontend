@@ -1,4 +1,5 @@
 export type PaymentMethods = 'card' | 'cash' | '';
+export type CategoryType = 'софт-скилл' | 'хард-скилл' | 'другое' | 'кнопка' | 'доп';
 
 export interface IProduct {
   id: string,
