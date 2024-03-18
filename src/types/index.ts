@@ -18,7 +18,7 @@ export interface IAppState {
   loading: boolean,
 }
 
-export interface ICard {
+export interface ICard<T> {
   id: string;
   title: string;
   category: string;

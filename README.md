@@ -144,8 +144,9 @@ yarn build
 `set image(value: string)` - Этот метод устанавливает изображение для карточки
 `set description(value: string | string[])` - Этот метод устанавливает описание продукта
 `set price(value: string)` - Этот метод устанавливает цену продукта
+`get price(): number` - Этот метод возвращает цену продукта
 `set category(value: string)` - Этот метод устаналивает катогорию товара
-`get category(): string` - Этот метод возвращает категорию товара
+
 
 ## Компоненты 
 
