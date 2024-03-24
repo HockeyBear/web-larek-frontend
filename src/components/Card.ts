@@ -6,7 +6,7 @@ export interface ICardAction {
   onClick: (event: MouseEvent) => void;
 }
 
-export class Card<T> extends Component<ICard<T>> {
+export class Card<T> extends Component<ICard> {
   protected _title: HTMLElement;
   protected _image?: HTMLImageElement;
   protected _category?: HTMLElement;
@@ -14,6 +14,7 @@ export class Card<T> extends Component<ICard<T>> {
   protected _price: HTMLElement;
   protected _button?: HTMLButtonElement;
   protected _buttonModal?: HTMLButtonElement;
+  // protected _buttonTitle: string;
 
   private categoryKey: Record<string, string> = {
   "софт-скил": "card_soft-skill",
@@ -65,6 +66,12 @@ export class Card<T> extends Component<ICard<T>> {
     return this._title.textContent || "";
   }
 
+  set buttonTitle(value: string) {
+    if(this._button) {
+      this._button.textContent = value;
+    }
+  }
+
   set image(value: string) {
     if ( this._image instanceof HTMLImageElement) {
       this._image.src = value;
@@ -100,5 +107,45 @@ export class Card<T> extends Component<ICard<T>> {
     } else {
       this.setText(this._description, value);
     }
+  }
+}
+
+export interface IBasketItem {
+  title: string;
+  price: number;
+}
+
+export class BasketItem extends Component<IBasketItem> {
+  protected _index: HTMLElement;
+  protected _title: HTMLElement;
+  protected _price: HTMLElement;
+  protected _button: HTMLButtonElement;
+
+  constructor(container: HTMLElement, index: number, action?: ICardAction) {
+    super(container);
+
+    this._index = ensureElement<HTMLElement>('.basket__item-index', container);
+    this.setText(this._index, index + 1);
+    this._title = ensureElement<HTMLElement>('.card__title', container);
+    this._price = ensureElement<HTMLElement>('.card__price', container);
+    this._button = container.querySelector('.card__button');
+    
+    if(action?.onClick) {
+      if(this._button) {
+        this._button.addEventListener('click', (action.onClick));
+      }
+    }
+  }
+
+  set index(value: number) {
+    this.setText(this._index, value)
+  }
+
+  set title(value: string) {
+    this.setText(this._title, value)
+  }
+
+  set price(value: number) {
+    this.setText(this._price, value);
   }
 }

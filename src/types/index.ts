@@ -18,7 +18,7 @@ export interface IAppState {
   loading: boolean,
 }
 
-export interface ICard<T> {
+export interface ICard {
   id: string;
   title: string;
   category: string;
@@ -26,6 +26,7 @@ export interface ICard<T> {
   image: string;
   price: number | null;
   selected: boolean;
+  button: string;
 }
 
 export interface IPage {
@@ -49,7 +50,9 @@ export interface IOrderFormError extends IOrderContacts, IOrderDeliveryForm {}
 export interface IOrder extends IOrderFormError {
   items: string[],
   total: number;
+  payment: PaymentMethods;
 }
+
 
 export interface IOrderSuccess {
   id: string;
