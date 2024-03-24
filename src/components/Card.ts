@@ -17,11 +17,11 @@ export class Card<T> extends Component<ICard> {
   // protected _buttonTitle: string;
 
   private categoryKey: Record<string, string> = {
-  "софт-скил": "card_soft-skill",
-  "хард-скил": "card_hard-skill",
-  другое: "card_other",
-  кнопка: "card_button",
-  дополнительное: "card_additional"
+    "софт-скил": "_soft",
+    "хард-скил": "_hard",
+    кнопка: "_button",
+    дополнительное: "_additional",
+    другое: "_other"
   }
 
   constructor(protected blockName: string, container: HTMLElement, action?: ICardAction) {
