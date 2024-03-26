@@ -7,9 +7,9 @@ import {Page} from "./components/Page";
 import {cloneTemplate, createElement, ensureElement} from "./utils/utils";
 import {Modal} from "./components/common/Modal";
 import { BasketItem, Card } from './components/Card';
-import { Basket } from './components/common/Basket';
+import { Basket } from './components/Basket';
 import { Order } from './components/Order';
-import { Success } from './components/common/Success';
+import { Success } from './components/Success';
 import { Contacts } from './components/Contacts';
 import { IOrderContacts, IOrderDeliveryForm } from './types';
 

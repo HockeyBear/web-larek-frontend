@@ -68,7 +68,8 @@ export class Card<T> extends Component<ICard> {
 
   set buttonTitle(value: string) {
     if(this._button) {
-      this._button.textContent = value;
+      // this._button.textContent = value;
+      this.setText(this._button, value);
     }
   }
 
